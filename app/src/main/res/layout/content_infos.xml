@@ -5,14 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".InfosActivity"
+    tools:context=".ui.activities.InfosActivity"
     tools:showIn="@layout/activity_infos">
 
 
     <ImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/boba_lego"
         android:layout_above="@id/infosBoba"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp"

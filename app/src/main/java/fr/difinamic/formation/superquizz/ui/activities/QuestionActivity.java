@@ -1,18 +1,14 @@
-package fr.difinamic.formation.superquizz;
+package fr.difinamic.formation.superquizz.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
+import fr.difinamic.formation.superquizz.R;
 import fr.difinamic.formation.superquizz.model.Question;
 
 public class QuestionActivity extends AppCompatActivity {

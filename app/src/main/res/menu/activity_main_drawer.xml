@@ -5,8 +5,20 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_play"
+            android:title="Play"
+            android:icon="@drawable/ic_play_arrow_black_24dp"/>
+        <item
+            android:id="@+id/nav_score"
+            android:title="Score"/>
+        <item
             android:id="@+id/nav_infos"
-            android:title="Infos" />
+            android:title="Infos"
+            />
+        <item
+            android:id="@+id/nav_settings"
+            android:title="Settings"
+            android:icon="@drawable/ic_menu_manage"/>
 
     </group>
 
