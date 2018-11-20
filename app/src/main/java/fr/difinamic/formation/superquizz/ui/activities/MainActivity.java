@@ -18,15 +18,16 @@ import android.widget.Toast;
 
 import fr.difinamic.formation.superquizz.R;
 import fr.difinamic.formation.superquizz.model.*;
+import fr.difinamic.formation.superquizz.ui.fragments.HomeFragment;
 import fr.difinamic.formation.superquizz.ui.fragments.PlayFragment;
+import fr.difinamic.formation.superquizz.ui.fragments.QuestionListFragment;
 import fr.difinamic.formation.superquizz.ui.fragments.ScoreFragment;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, PlayFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, PlayFragment.OnFragmentInteractionListener, QuestionListFragment.OnQuestionListListener,
+        HomeFragment.OnFragmentInteractionListener {
 
-    private Question question;
-    private final String questionKey = "question";
-
+    private static final String ARG_QUESTION = "question";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,15 +36,9 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if (savedInstanceState != null) {
-            this.question = savedInstanceState.getParcelable(questionKey);
-        } else {
-            this.question = new Question("Quelle est la capitale de la france ?", 4, TypeQuestion.SIMPLE);
-            this.question.addProposition("Paris");
-            this.question.addProposition("Rome");
-            this.question.addProposition("Madrid");
-            this.question.addProposition("Londres");
-            this.question.setBonneReponse("Paris");
+        if (savedInstanceState == null) {
+            HomeFragment fragment = HomeFragment.newInstance(getString(R.string.app_name));
+            getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -94,19 +89,16 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_play) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            PlayFragment fragment = PlayFragment.newInstance(this.question);
-            fragmentTransaction.replace(R.id.frament_container, fragment);
-            fragmentTransaction.commit();
+        if (id == R.id.nav_home) {
+            HomeFragment fragment = HomeFragment.newInstance(getString(R.string.app_name));
+            getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
+        } else if (id == R.id.nav_play) {
+            QuestionListFragment fragment = QuestionListFragment.newInstance(1);
+            getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
         } else if (id == R.id.nav_score) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             ScoreFragment fragment = ScoreFragment.newInstance(3, 4);
-            fragmentTransaction.replace(R.id.frament_container, fragment);
-            fragmentTransaction.commit();
-        }else if (id == R.id.nav_infos) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
+        } else if (id == R.id.nav_infos) {
             Intent intentInfo = new Intent(MainActivity.this, InfosActivity.class);
             startActivity(intentInfo);
         }
@@ -119,7 +111,6 @@ public class MainActivity extends AppCompatActivity
     // Function save data (called when onCreate() is called)
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(questionKey, this.question);
     }
 
     @Override
@@ -130,5 +121,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
 
+    }
+
+    @Override
+    public void onListFragmentInteraction(Question q) {
+        Intent intentQuestion = new Intent(MainActivity.this, QuestionActivity.class);
+        intentQuestion.putExtra(ARG_QUESTION, q);
+        startActivity(intentQuestion);
     }
 }

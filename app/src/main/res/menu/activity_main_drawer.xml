@@ -5,16 +5,21 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_home"
+            android:title="Accueil"
+            android:icon="@drawable/ic_home_black_24dp"/>
+        <item
             android:id="@+id/nav_play"
             android:title="Play"
             android:icon="@drawable/ic_play_arrow_black_24dp"/>
         <item
             android:id="@+id/nav_score"
-            android:title="Score"/>
+            android:title="Score"
+            android:icon="@drawable/ic_school_black_24dp"/>
         <item
             android:id="@+id/nav_infos"
             android:title="Infos"
-            />
+            android:icon="@drawable/ic_info_black_24dp"/>
         <item
             android:id="@+id/nav_settings"
             android:title="Settings"
