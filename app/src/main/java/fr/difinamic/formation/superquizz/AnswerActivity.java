@@ -6,6 +6,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class AnswerActivity extends AppCompatActivity {
@@ -20,9 +21,11 @@ public class AnswerActivity extends AppCompatActivity {
         final boolean answer = getIntent().getBooleanExtra("answer", false);
 
         if (answer) {
-            ((TextView) findViewById(R.id.text_answer)).setText("Correct !");
+            ((TextView) findViewById(R.id.text_answer)).setText("Bonne réponse !");
+            ((ImageView) findViewById(R.id.img_answer)).setImageDrawable(getDrawable(R.drawable.ic_done_black_24dp));
         } else {
-            ((TextView) findViewById(R.id.text_answer)).setText("Incorrect !");
+            ((TextView) findViewById(R.id.text_answer)).setText("Mauvaise réponse!");
+            ((ImageView) findViewById(R.id.img_answer)).setImageDrawable(getDrawable(R.drawable.ic_close_black_24dp));
         }
     }
 

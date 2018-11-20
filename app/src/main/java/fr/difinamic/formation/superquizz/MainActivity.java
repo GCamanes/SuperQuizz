@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity
             q1.setBonneReponse("Paris");
 
             this.questionMemDAO.save(q1);
+        } else {
+            this.questionMemDAO = savedInstanceState.getParcelable(questionMemDAOKey);
         }
 
         findViewById(R.id.button_play).setOnClickListener(new View.OnClickListener() {
@@ -109,6 +111,12 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    // Function save data (called when onCreate() is called)
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(questionMemDAOKey, this.questionMemDAO);
     }
 
 }
