@@ -6,7 +6,7 @@
     tools:context=".ui.fragments.PlayFragment">
 
     <Button
-        android:text="PLAY"
+        android:text="@string/play_menu_item"
         android:id="@+id/button_play"
         android:layout_width="100dp"
         android:layout_height="50dp"

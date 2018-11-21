@@ -6,38 +6,29 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:title="Accueil"
+            android:title="@string/home_menu_item"
             android:icon="@drawable/ic_home_black_24dp"/>
         <item
             android:id="@+id/nav_play"
-            android:title="Play"
+            android:title="@string/play_menu_item"
             android:icon="@drawable/ic_play_arrow_black_24dp"/>
         <item
             android:id="@+id/nav_score"
-            android:title="Score"
+            android:title="@string/score_menu_item"
             android:icon="@drawable/ic_school_black_24dp"/>
         <item
+            android:id="@+id/nav_add_question"
+            android:title="@string/add_question_menu"
+            android:icon="@drawable/ic_add_black_24dp"/>
+        <item
             android:id="@+id/nav_infos"
-            android:title="Infos"
+            android:title="@string/infos_menu_item"
             android:icon="@drawable/ic_info_black_24dp"/>
         <item
             android:id="@+id/nav_settings"
-            android:title="Settings"
+            android:title="@string/settings_menu_item"
             android:icon="@drawable/ic_menu_manage"/>
 
     </group>
-
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
-        </menu>
-    </item>
 
 </menu>

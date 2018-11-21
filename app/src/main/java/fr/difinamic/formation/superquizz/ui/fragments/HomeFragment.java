@@ -58,7 +58,7 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
-        ((TextView) rootView.findViewById(R.id.text_appname)).setText("Bonjour ! \n\nBienvenue sur le "+mAppName);
+        ((TextView) rootView.findViewById(R.id.text_appname)).setText(String.format("%s %s", getString(R.string.home_message), mAppName));
 
         return rootView;
     }

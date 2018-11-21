@@ -8,17 +8,18 @@ import android.widget.TextView;
 
 import fr.difinamic.formation.superquizz.R;
 import fr.difinamic.formation.superquizz.model.Question;
+import fr.difinamic.formation.superquizz.model.QuestionMemDAO;
 import fr.difinamic.formation.superquizz.ui.fragments.QuestionListFragment.OnQuestionListListener;
 
 import java.util.List;
 
-public class QuestionRecyclerViewAdapter extends RecyclerView.Adapter<QuestionRecyclerViewAdapter.ViewHolder> {
+public class QuestionRecyclerMemViewAdapter extends RecyclerView.Adapter<QuestionRecyclerMemViewAdapter.ViewHolder> {
 
     private final List<Question> mListQuestions;
     private final OnQuestionListListener mListener;
 
-    public QuestionRecyclerViewAdapter(List<Question> listQuestions, OnQuestionListListener listener) {
-        mListQuestions = listQuestions;
+    public QuestionRecyclerMemViewAdapter( OnQuestionListListener listener) {
+        mListQuestions = QuestionMemDAO.getInstance().findAll();
         mListener = listener;
     }
 

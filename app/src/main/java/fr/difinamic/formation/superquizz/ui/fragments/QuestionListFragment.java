@@ -12,7 +12,9 @@ import android.view.ViewGroup;
 
 import fr.difinamic.formation.superquizz.R;
 import fr.difinamic.formation.superquizz.model.Question;
+import fr.difinamic.formation.superquizz.model.QuestionMemDAO;
 import fr.difinamic.formation.superquizz.model.TypeQuestion;
+import fr.difinamic.formation.superquizz.ui.activities.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,8 @@ public class QuestionListFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnQuestionListListener mListener;
+
+    private RecyclerView.Adapter adapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -62,44 +66,16 @@ public class QuestionListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_question_list, container, false);
 
-        List<Question> listQuestions = new ArrayList<Question>();
-        Question q1 = new Question("Quelle est la capitale de la france ?", 4, TypeQuestion.SIMPLE);
-        q1.addProposition("Paris");
-        q1.addProposition("Rome");
-        q1.addProposition("Madrid");
-        q1.addProposition("Londres");
-        q1.setBonneReponse("Paris");
-
-        Question q2 = new Question("Quel héro est le plus balaise ?", 4, TypeQuestion.BONUS);
-        q2.addProposition("Bob l'éponge");
-        q2.addProposition("BATMAAAN !");
-        q2.addProposition("Joséphine");
-        q2.addProposition("Slip Man");
-        q2.setBonneReponse("BATMAAAN !");
-
-        Question q3 = new Question("Quelle est la couleur ?", 4, TypeQuestion.SIMPLE);
-        q3.addProposition("Rouge");
-        q3.addProposition("Bleu");
-        q3.addProposition("Fushia");
-        q3.addProposition("Taupe");
-        q3.setBonneReponse("Bleu");
-
-
-        listQuestions.add(q1);
-        listQuestions.add(q2);
-        listQuestions.add(q3);
-
-
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(new QuestionRecyclerViewAdapter(listQuestions, mListener));
+
+            adapter = new QuestionRecyclerMemViewAdapter(mListener);
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            recyclerView.setAdapter(adapter);
+
+
         }
         return view;
     }
