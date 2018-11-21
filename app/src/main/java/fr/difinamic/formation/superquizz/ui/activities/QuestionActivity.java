@@ -22,7 +22,7 @@ public class QuestionActivity extends AppCompatActivity {
 
         final Question question = getIntent().getParcelableExtra("question");
 
-        TextView textIntitule = (TextView)findViewById(R.id.textIntitule);
+        TextView textIntitule = (TextView)findViewById(R.id.text_intitule);
         textIntitule.setText(question.getIntitule());
 
         Button button1 = (Button) findViewById(R.id.button_rep1);

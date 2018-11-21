@@ -1,7 +1,5 @@
 package fr.difinamic.formation.superquizz.ui.fragments;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,7 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import fr.difinamic.formation.superquizz.R;
 import fr.difinamic.formation.superquizz.model.Question;
@@ -39,14 +38,6 @@ public class QuestionCreationFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment QuestionCreationFragment.
-     */
     // TODO: Rename and change types and number of parameters
     public static QuestionCreationFragment newInstance(String param1, String param2) {
         QuestionCreationFragment fragment = new QuestionCreationFragment();
@@ -91,18 +82,23 @@ public class QuestionCreationFragment extends Fragment {
         ((RadioButton) rootView.findViewById(R.id.radio_answer3)).setOnCheckedChangeListener(onCheckedChangeListener);
         ((RadioButton) rootView.findViewById(R.id.radio_answer4)).setOnCheckedChangeListener(onCheckedChangeListener);
 
+        ((RadioButton) rootView.findViewById(R.id.radio_answer1)).setChecked(true);
+
         rootView.findViewById(R.id.button_add_question).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                //TODO get real value from the interface
-                Question q = new Question("TEST", 4,TypeQuestion.BONUS);
-                q.setBonneReponse("tttttt");
-                q.addProposition("tttttt");
-                q.addProposition("ze");
-                q.addProposition("ze");
-                q.addProposition("ze");
-                mListener.saveQuestion(q);
+                if (isFullyFilled()) {
+                    Question q = new Question(((TextView) getView().findViewById(R.id.text_question_label)).getText().toString(), 4,TypeQuestion.SIMPLE);
+                    q.setBonneReponse(getGoodAnswer());
+                    q.addProposition(((TextView) getView().findViewById(R.id.text_answer1)).getText().toString());
+                    q.addProposition(((TextView) getView().findViewById(R.id.text_answer2)).getText().toString());
+                    q.addProposition(((TextView) getView().findViewById(R.id.text_answer3)).getText().toString());
+                    q.addProposition(((TextView) getView().findViewById(R.id.text_answer4)).getText().toString());
+                    mListener.saveQuestion(q);
+                } else {
+                    Toast.makeText(getContext(), "Il faut remplir tous les champs pour sauvegarder la question", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -119,18 +115,33 @@ public class QuestionCreationFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+    private boolean isFullyFilled() {
+        if (((TextView) getView().findViewById(R.id.text_question_label)).getText().toString().isEmpty() ||
+                ((TextView) getView().findViewById(R.id.text_answer1)).getText().toString().isEmpty() ||
+                ((TextView) getView().findViewById(R.id.text_answer2)).getText().toString().isEmpty() ||
+                ((TextView) getView().findViewById(R.id.text_answer3)).getText().toString().isEmpty() ||
+                ((TextView) getView().findViewById(R.id.text_answer3)).getText().toString().isEmpty()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private String getGoodAnswer() {
+
+        if (((RadioButton) getView().findViewById(R.id.radio_answer1)).isChecked()) {
+            return ((TextView) getView().findViewById(R.id.text_answer1)).getText().toString();
+        } else if (((RadioButton) getView().findViewById(R.id.radio_answer2)).isChecked()) {
+            return ((TextView) getView().findViewById(R.id.text_answer2)).getText().toString();
+        } else if (((RadioButton) getView().findViewById(R.id.radio_answer3)).isChecked()) {
+            return ((TextView) getView().findViewById(R.id.text_answer3)).getText().toString();
+        } else {
+            return ((TextView) getView().findViewById(R.id.text_answer4)).getText().toString();
+        }
+    }
+
+
     public interface OnCreatedQuestion {
-        // TODO: Update argument type and name
         void saveQuestion(Question q);
     }
 }

@@ -18,7 +18,7 @@
     <string name="settings_menu_item">Settings</string>
     <string name="good_answer_message">Bonne réponse !</string>
     <string name="bad_answer_message">Mauvaise réponse!</string>
-    <string name="home_message">Bonjour !   Bienvenue sur le</string>
+    <string name="home_message">Bonjour !\nBienvenue sur le</string>
     <string name="description_app">Appli Android développée pendant la formation DTA Mobile</string>
     <string name="score_message_intro">Score final :</string>
     <string name="slogan_app">Super Quizz ! Le quizz des champions !</string>

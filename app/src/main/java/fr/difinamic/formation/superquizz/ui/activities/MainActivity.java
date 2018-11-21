@@ -1,12 +1,9 @@
 package fr.difinamic.formation.superquizz.ui.activities;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.view.View;
+
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -15,28 +12,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import fr.difinamic.formation.superquizz.R;
 import fr.difinamic.formation.superquizz.model.*;
 import fr.difinamic.formation.superquizz.ui.fragments.HomeFragment;
-import fr.difinamic.formation.superquizz.ui.fragments.PlayFragment;
 import fr.difinamic.formation.superquizz.ui.fragments.QuestionCreationFragment;
 import fr.difinamic.formation.superquizz.ui.fragments.QuestionListFragment;
 import fr.difinamic.formation.superquizz.ui.fragments.ScoreFragment;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, PlayFragment.OnFragmentInteractionListener, QuestionListFragment.OnQuestionListListener,
-        HomeFragment.OnFragmentInteractionListener, QuestionCreationFragment.OnCreatedQuestion {
+        implements NavigationView.OnNavigationItemSelectedListener, QuestionListFragment.OnQuestionListListener,
+        QuestionCreationFragment.OnCreatedQuestion {
 
     private static final String ARG_QUESTION = "question";
-    private static final String ARG_LISTQUESTIONS = "list_question";
 
-
-    private Fragment currentFragment;
+    private static Fragment currentFragment;
+    private static final String ARG_CURRENTFRAGMENT = "current_fragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +36,11 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
-        HomeFragment fragment = HomeFragment.newInstance(getString(R.string.app_name));
-        getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
-
+        if(currentFragment == null) {
+            displayHomeFragment();
+        } else {
+            getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, currentFragment).commit();
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -94,20 +86,15 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            HomeFragment fragment = HomeFragment.newInstance(getString(R.string.app_name));
-            getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
+            displayHomeFragment();
         } else if (id == R.id.nav_play) {
-           displayListFragment();
+           displayQuestionListFragment();
         } else if (id == R.id.nav_score) {
-            ScoreFragment fragment = ScoreFragment.newInstance(3, 4);
-            getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
+            displayScoreFragment();
         } else if (id == R.id.nav_add_question) {
-            QuestionCreationFragment fragment = QuestionCreationFragment.newInstance("1", "2");
-            fragment.setListener(this);
-            getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
+            displayQuestionCreationFragment();
         }else if (id == R.id.nav_infos) {
-            Intent intentInfo = new Intent(MainActivity.this, InfosActivity.class);
-            startActivity(intentInfo);
+            displayInfosActivity();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -115,22 +102,39 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void displayListFragment(){
+    private void displayHomeFragment() {
+        HomeFragment fragment = HomeFragment.newInstance(getString(R.string.app_name));
+        currentFragment = fragment;
+        getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
+    }
 
+    private void displayQuestionListFragment(){
         QuestionListFragment fragment = QuestionListFragment.newInstance(1);
         currentFragment = fragment;
         getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
     }
 
+    public void displayScoreFragment() {
+        ScoreFragment fragment = ScoreFragment.newInstance(3, 4);
+        currentFragment = fragment;
+        getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
+    }
+
+    public void displayQuestionCreationFragment() {
+        QuestionCreationFragment fragment = QuestionCreationFragment.newInstance("1", "2");
+        currentFragment = fragment;
+        fragment.setListener(this);
+        getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
+    }
+
+    public void displayInfosActivity() {
+        Intent intentInfo = new Intent(MainActivity.this, InfosActivity.class);
+        startActivity(intentInfo);
+    }
+
     // Function save data (called when onCreate() is called)
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
     }
 
     @Override
@@ -139,7 +143,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListFragmentInteraction(Question q) {
+    public void showQuestion(Question q) {
         Intent intentQuestion = new Intent(MainActivity.this, QuestionActivity.class);
         intentQuestion.putExtra(ARG_QUESTION, q);
         startActivity(intentQuestion);
@@ -148,6 +152,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void saveQuestion(Question q) {
         QuestionMemDAO.getInstance().save(q);
-        displayListFragment();
+        displayQuestionListFragment();
     }
 }
