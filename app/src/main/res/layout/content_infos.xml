@@ -10,18 +10,20 @@
 
 
     <ImageView
+        android:id="@+id/logo_app"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_above="@id/infosBoba"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp"
         android:src="@drawable/super_quizz_logo"
+        android:layout_marginTop="100dp"
         />
 
     <TextView
-        android:id="@+id/infosBoba"
-        android:text="Appli Android développée\npendant la formation\nDTA Mobile"
-        android:textSize="30dp"
+        android:id="@+id/infos_app"
+        android:text="@string/description_app"
+        android:layout_below="@id/logo_app"
+        android:textSize="30sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"

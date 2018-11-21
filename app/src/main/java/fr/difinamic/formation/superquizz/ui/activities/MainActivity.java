@@ -3,6 +3,7 @@ package fr.difinamic.formation.superquizz.ui.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
@@ -16,18 +17,26 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fr.difinamic.formation.superquizz.R;
 import fr.difinamic.formation.superquizz.model.*;
 import fr.difinamic.formation.superquizz.ui.fragments.HomeFragment;
 import fr.difinamic.formation.superquizz.ui.fragments.PlayFragment;
+import fr.difinamic.formation.superquizz.ui.fragments.QuestionCreationFragment;
 import fr.difinamic.formation.superquizz.ui.fragments.QuestionListFragment;
 import fr.difinamic.formation.superquizz.ui.fragments.ScoreFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, PlayFragment.OnFragmentInteractionListener, QuestionListFragment.OnQuestionListListener,
-        HomeFragment.OnFragmentInteractionListener {
+        HomeFragment.OnFragmentInteractionListener, QuestionCreationFragment.OnCreatedQuestion {
 
     private static final String ARG_QUESTION = "question";
+    private static final String ARG_LISTQUESTIONS = "list_question";
+
+
+    private Fragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,10 +45,10 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if (savedInstanceState == null) {
-            HomeFragment fragment = HomeFragment.newInstance(getString(R.string.app_name));
-            getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
-        }
+
+        HomeFragment fragment = HomeFragment.newInstance(getString(R.string.app_name));
+        getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -75,11 +84,6 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -93,12 +97,15 @@ public class MainActivity extends AppCompatActivity
             HomeFragment fragment = HomeFragment.newInstance(getString(R.string.app_name));
             getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
         } else if (id == R.id.nav_play) {
-            QuestionListFragment fragment = QuestionListFragment.newInstance(1);
-            getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
+           displayListFragment();
         } else if (id == R.id.nav_score) {
             ScoreFragment fragment = ScoreFragment.newInstance(3, 4);
             getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
-        } else if (id == R.id.nav_infos) {
+        } else if (id == R.id.nav_add_question) {
+            QuestionCreationFragment fragment = QuestionCreationFragment.newInstance("1", "2");
+            fragment.setListener(this);
+            getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
+        }else if (id == R.id.nav_infos) {
             Intent intentInfo = new Intent(MainActivity.this, InfosActivity.class);
             startActivity(intentInfo);
         }
@@ -108,9 +115,17 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    private void displayListFragment(){
+
+        QuestionListFragment fragment = QuestionListFragment.newInstance(1);
+        currentFragment = fragment;
+        getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
+    }
+
     // Function save data (called when onCreate() is called)
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+
     }
 
     @Override
@@ -128,5 +143,11 @@ public class MainActivity extends AppCompatActivity
         Intent intentQuestion = new Intent(MainActivity.this, QuestionActivity.class);
         intentQuestion.putExtra(ARG_QUESTION, q);
         startActivity(intentQuestion);
+    }
+
+    @Override
+    public void saveQuestion(Question q) {
+        QuestionMemDAO.getInstance().save(q);
+        displayListFragment();
     }
 }

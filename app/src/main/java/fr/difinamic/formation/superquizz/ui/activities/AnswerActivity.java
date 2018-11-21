@@ -23,10 +23,10 @@ public class AnswerActivity extends AppCompatActivity {
         final boolean answer = getIntent().getBooleanExtra("answer", false);
 
         if (answer) {
-            ((TextView) findViewById(R.id.text_answer)).setText("Bonne réponse !");
+            ((TextView) findViewById(R.id.text_answer)).setText(getString(R.string.good_answer_message));
             ((ImageView) findViewById(R.id.img_answer)).setImageDrawable(getDrawable(R.drawable.ic_done_black_24dp));
         } else {
-            ((TextView) findViewById(R.id.text_answer)).setText("Mauvaise réponse!");
+            ((TextView) findViewById(R.id.text_answer)).setText(getString(R.string.bad_answer_message));
             ((ImageView) findViewById(R.id.img_answer)).setImageDrawable(getDrawable(R.drawable.ic_close_black_24dp));
         }
     }

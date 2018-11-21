@@ -10,6 +10,17 @@
     <string name="title_activity_question">QuestionActivity</string>
     <string name="title_activity_answer">AnswerActivity</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="score_menu_item">Score</string>
+    <string name="home_menu_item">Accueil</string>
+    <string name="play_menu_item">Play</string>
+    <string name="infos_menu_item">Infos</string>
+    <string name="settings_menu_item">Settings</string>
+    <string name="good_answer_message">Bonne réponse !</string>
+    <string name="bad_answer_message">Mauvaise réponse!</string>
+    <string name="home_message">Bonjour !   Bienvenue sur le</string>
+    <string name="description_app">Appli Android développée pendant la formation DTA Mobile</string>
+    <string name="score_message_intro">Score final :</string>
+    <string name="slogan_app">Super Quizz ! Le quizz des champions !</string>
+    <string name="add_question_menu">Ajouter une question</string>
 </resources>

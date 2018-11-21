@@ -54,8 +54,8 @@ public class ScoreFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_score, container, false);
 
-        ((TextView)rootView.findViewById(R.id.text_score)).setText(mScore.toString());
-        ((TextView)rootView.findViewById(R.id.text_score_max)).setText(mScoreMax.toString());
+        ((TextView)rootView.findViewById(R.id.text_score)).setText(String.format("%s", mScore));
+        ((TextView)rootView.findViewById(R.id.text_score_max)).setText(String.format("%s", mScoreMax));
 
         return rootView;
     }
