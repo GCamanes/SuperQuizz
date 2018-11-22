@@ -25,13 +25,9 @@ import fr.difinamic.formation.superquizz.model.TypeQuestion;
 public class QuestionCreationFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_QUESTION = "question";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+    private Question mQuestion;
     private OnCreatedQuestion mListener;
 
     public QuestionCreationFragment() {
@@ -39,11 +35,10 @@ public class QuestionCreationFragment extends Fragment {
     }
 
     // TODO: Rename and change types and number of parameters
-    public static QuestionCreationFragment newInstance(String param1, String param2) {
+    public static QuestionCreationFragment newInstance(Question q) {
         QuestionCreationFragment fragment = new QuestionCreationFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putParcelable(ARG_QUESTION, q);
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,8 +47,7 @@ public class QuestionCreationFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mQuestion = getArguments().getParcelable(ARG_QUESTION );
         }
     }
 
@@ -62,6 +56,26 @@ public class QuestionCreationFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         final View rootView = inflater.inflate(R.layout.fragment_question_creation, container, false);
+
+        if (mQuestion != null) {
+            ((TextView) rootView.findViewById(R.id.text_question_label)).setText(mQuestion.getIntitule());
+            ((TextView) rootView.findViewById(R.id.text_answer1)).setText(mQuestion.getPropositions().get(0));
+            ((TextView) rootView.findViewById(R.id.text_answer2)).setText(mQuestion.getPropositions().get(1));
+            ((TextView) rootView.findViewById(R.id.text_answer3)).setText(mQuestion.getPropositions().get(2));
+            ((TextView) rootView.findViewById(R.id.text_answer4)).setText(mQuestion.getPropositions().get(3));
+
+            if (mQuestion.verifierReponse(mQuestion.getPropositions().get(0))) {
+                ((RadioButton) rootView.findViewById(R.id.radio_answer1)).setChecked(true);
+            } else if (mQuestion.verifierReponse(mQuestion.getPropositions().get(1))) {
+                ((RadioButton) rootView.findViewById(R.id.radio_answer2)).setChecked(true);
+            } else if(mQuestion.verifierReponse(mQuestion.getPropositions().get(2))) {
+                ((RadioButton) rootView.findViewById(R.id.radio_answer3)).setChecked(true);
+            } else {
+                ((RadioButton) rootView.findViewById(R.id.radio_answer4)).setChecked(true);
+            }
+        } else {
+            ((RadioButton) rootView.findViewById(R.id.radio_answer1)).setChecked(true);
+        }
 
         RadioButton.OnCheckedChangeListener onCheckedChangeListener = new RadioButton.OnCheckedChangeListener() {
             @Override
@@ -82,20 +96,28 @@ public class QuestionCreationFragment extends Fragment {
         ((RadioButton) rootView.findViewById(R.id.radio_answer3)).setOnCheckedChangeListener(onCheckedChangeListener);
         ((RadioButton) rootView.findViewById(R.id.radio_answer4)).setOnCheckedChangeListener(onCheckedChangeListener);
 
-        ((RadioButton) rootView.findViewById(R.id.radio_answer1)).setChecked(true);
-
         rootView.findViewById(R.id.button_add_question).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 if (isFullyFilled()) {
-                    Question q = new Question(((TextView) getView().findViewById(R.id.text_question_label)).getText().toString(), 4,TypeQuestion.SIMPLE);
-                    q.setBonneReponse(getGoodAnswer());
-                    q.addProposition(((TextView) getView().findViewById(R.id.text_answer1)).getText().toString());
-                    q.addProposition(((TextView) getView().findViewById(R.id.text_answer2)).getText().toString());
-                    q.addProposition(((TextView) getView().findViewById(R.id.text_answer3)).getText().toString());
-                    q.addProposition(((TextView) getView().findViewById(R.id.text_answer4)).getText().toString());
-                    mListener.saveQuestion(q);
+                    if (mQuestion == null) {
+                        Question q = new Question(((TextView) getView().findViewById(R.id.text_question_label)).getText().toString(), 4, TypeQuestion.SIMPLE);
+                        q.setBonneReponse(getGoodAnswer());
+                        q.addProposition(((TextView) getView().findViewById(R.id.text_answer1)).getText().toString());
+                        q.addProposition(((TextView) getView().findViewById(R.id.text_answer2)).getText().toString());
+                        q.addProposition(((TextView) getView().findViewById(R.id.text_answer3)).getText().toString());
+                        q.addProposition(((TextView) getView().findViewById(R.id.text_answer4)).getText().toString());
+                        mListener.saveQuestion(q);
+                    } else {
+                        mQuestion.setIntitule(((TextView) getView().findViewById(R.id.text_question_label)).getText().toString());
+                        mQuestion.setBonneReponse(getGoodAnswer());
+                        mQuestion.getPropositions().set(0,(((TextView) getView().findViewById(R.id.text_answer1)).getText().toString()));
+                        mQuestion.getPropositions().set(1,(((TextView) getView().findViewById(R.id.text_answer2)).getText().toString()));
+                        mQuestion.getPropositions().set(2,(((TextView) getView().findViewById(R.id.text_answer3)).getText().toString()));
+                        mQuestion.getPropositions().set(3,(((TextView) getView().findViewById(R.id.text_answer4)).getText().toString()));
+                        mListener.saveQuestion(mQuestion);
+                    }
                 } else {
                     Toast.makeText(getContext(), "Il faut remplir tous les champs pour sauvegarder la question", Toast.LENGTH_SHORT).show();
                 }

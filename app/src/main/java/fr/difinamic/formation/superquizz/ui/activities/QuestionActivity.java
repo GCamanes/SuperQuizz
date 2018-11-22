@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import fr.difinamic.formation.superquizz.R;
+import fr.difinamic.formation.superquizz.database.QuestionDataBaseHelper;
 import fr.difinamic.formation.superquizz.model.Question;
 
 public class QuestionActivity extends AppCompatActivity {

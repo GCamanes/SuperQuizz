@@ -3,13 +3,17 @@ package fr.difinamic.formation.superquizz.ui.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
 import fr.difinamic.formation.superquizz.R;
+import fr.difinamic.formation.superquizz.database.QuestionDataBaseHelper;
 import fr.difinamic.formation.superquizz.model.Question;
 
 /**
@@ -26,7 +30,8 @@ public class QuestionListFragment extends Fragment {
     private int mColumnCount = 1;
     private OnQuestionListListener mListener;
 
-    private RecyclerView.Adapter adapter;
+    private QuestionRecyclerMemViewAdapter adapter;
+
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -59,12 +64,13 @@ public class QuestionListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_question_list, container, false);
 
+        List<Question> questions = QuestionDataBaseHelper.getInstance(getContext()).getAllQuestions();
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
 
-            adapter = new QuestionRecyclerMemViewAdapter(mListener);
+            adapter = new QuestionRecyclerMemViewAdapter(mListener,questions);
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
             recyclerView.setAdapter(adapter);
 
@@ -93,5 +99,6 @@ public class QuestionListFragment extends Fragment {
     public interface OnQuestionListListener {
         // TODO: Update argument type and name
         void showQuestion(Question q);
+        void updateQuestion(Question q);
     }
 }

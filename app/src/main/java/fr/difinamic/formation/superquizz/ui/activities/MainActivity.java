@@ -12,8 +12,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import fr.difinamic.formation.superquizz.R;
+import fr.difinamic.formation.superquizz.database.QuestionDataBaseHelper;
 import fr.difinamic.formation.superquizz.model.*;
 import fr.difinamic.formation.superquizz.ui.fragments.HomeFragment;
 import fr.difinamic.formation.superquizz.ui.fragments.QuestionCreationFragment;
@@ -92,7 +94,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_score) {
             displayScoreFragment();
         } else if (id == R.id.nav_add_question) {
-            displayQuestionCreationFragment();
+            displayQuestionCreationFragment(null);
         }else if (id == R.id.nav_infos) {
             displayInfosActivity();
         }
@@ -102,13 +104,13 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void displayHomeFragment() {
+    public void displayHomeFragment() {
         HomeFragment fragment = HomeFragment.newInstance(getString(R.string.app_name));
         currentFragment = fragment;
         getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
     }
 
-    private void displayQuestionListFragment(){
+    public void displayQuestionListFragment(){
         QuestionListFragment fragment = QuestionListFragment.newInstance(1);
         currentFragment = fragment;
         getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
@@ -120,8 +122,8 @@ public class MainActivity extends AppCompatActivity
         getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
     }
 
-    public void displayQuestionCreationFragment() {
-        QuestionCreationFragment fragment = QuestionCreationFragment.newInstance("1", "2");
+    public void displayQuestionCreationFragment(Question q) {
+        QuestionCreationFragment fragment = QuestionCreationFragment.newInstance(q);
         currentFragment = fragment;
         fragment.setListener(this);
         getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
@@ -150,8 +152,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void updateQuestion(Question q) {
+        displayQuestionCreationFragment(q);
+    }
+
+    @Override
     public void saveQuestion(Question q) {
-        QuestionMemDAO.getInstance().save(q);
+        if (q.getId() == -1) {
+            QuestionDataBaseHelper.getInstance(this).addQuestion(q);
+        } else {
+            QuestionDataBaseHelper.getInstance(this).updateQuestion(q);
+        }
+
         displayQuestionListFragment();
     }
 }
