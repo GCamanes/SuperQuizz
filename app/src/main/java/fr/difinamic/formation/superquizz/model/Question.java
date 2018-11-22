@@ -6,19 +6,28 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 
 public class Question implements Parcelable {
+	private  int id;
 	private String intitule;
 	private ArrayList<String> propositions;
 	private String bonneReponse;
 	private TypeQuestion type;
 		
+	public Question(int id, String intitule, int nbReponses, TypeQuestion type) {
+		this.id = id;
+		this.intitule = intitule;
+		this.propositions = new ArrayList<String>(nbReponses);
+		this.type = type;
+	}
+
 	public Question(String intitule, int nbReponses, TypeQuestion type) {
-		super();
+		this.id = -1;
 		this.intitule = intitule;
 		this.propositions = new ArrayList<String>(nbReponses);
 		this.type = type;
 	}
 
 	protected Question(Parcel in) {
+		id = in.readInt();
 		intitule = in.readString();
 		propositions = in.createStringArrayList();
 		bonneReponse = in.readString();
@@ -43,7 +52,8 @@ public class Question implements Parcelable {
 	public void addProposition(String proposition) {
 		propositions.add(proposition);
 	}
-	
+
+	public int getId() {return id;}
 
 	public String getIntitule() {
 		return intitule;
@@ -93,6 +103,7 @@ public class Question implements Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(id);
 		dest.writeString(intitule);
 		dest.writeStringList(propositions);
 		dest.writeString(bonneReponse);
