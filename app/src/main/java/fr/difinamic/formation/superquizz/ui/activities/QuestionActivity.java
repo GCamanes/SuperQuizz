@@ -77,6 +77,10 @@ public class QuestionActivity extends AppCompatActivity implements AnswerQuestio
         intentAnswer.putExtra("answer", false);
         startActivity(intentAnswer);
     }
+
+    public interface OnAnswerSelectedListener {
+        void saveUserAnswer(boolean answer);
+    }
 }
 
 

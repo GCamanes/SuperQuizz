@@ -33,7 +33,7 @@ public class QuestionRecyclerMemViewAdapter extends RecyclerView.Adapter<Questio
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mQuestion = mListQuestions.get(position);
-        holder.mIdView.setText(String.valueOf(holder.mQuestion.getId()));
+        holder.mIdView.setText(String.valueOf(position+1));
         holder.mContentView.setText(mListQuestions.get(position).getIntitule());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
