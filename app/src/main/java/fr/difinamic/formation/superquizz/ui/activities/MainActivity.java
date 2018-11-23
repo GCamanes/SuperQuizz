@@ -14,7 +14,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.util.List;
+
 import fr.difinamic.formation.superquizz.R;
+import fr.difinamic.formation.superquizz.api.APIClient;
 import fr.difinamic.formation.superquizz.database.QuestionDataBaseHelper;
 import fr.difinamic.formation.superquizz.model.*;
 import fr.difinamic.formation.superquizz.ui.fragments.HomeFragment;
@@ -37,6 +41,20 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        APIClient.getInstance().getQuestions(new APIClient.APIResult<List<Question>>() {
+            @Override
+            public void onFailure(IOException e) {
+                Toast.makeText(MainActivity.this, "ERROR WITH HTTP SERVEUR", Toast.LENGTH_SHORT);
+            }
+
+            @Override
+            public void OnSuccess(List<Question> object) throws IOException {
+                for (Question q : object) {
+                    QuestionDataBaseHelper.getInstance(MainActivity.this).addQuestion(q);
+                }
+            }
+        });
 
         if(currentFragment == null) {
             displayHomeFragment();
