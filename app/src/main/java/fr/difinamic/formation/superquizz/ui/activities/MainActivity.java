@@ -28,7 +28,7 @@ import fr.difinamic.formation.superquizz.ui.fragments.ScoreFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, QuestionListFragment.OnQuestionListListener,
-        QuestionCreationFragment.OnCreatedQuestion {
+        QuestionCreationFragment.OnCreatedQuestion, QuestionActivity.OnAnswerSelectedListener {
 
     private static final String ARG_QUESTION = "question";
 
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        APIClient.getInstance().getQuestions(new APIClient.APIResult<List<Question>>() {
+        /*APIClient.getInstance().getQuestions(new APIClient.APIResult<List<Question>>() {
             @Override
             public void onFailure(IOException e) {
                 Toast.makeText(MainActivity.this, "ERROR WITH HTTP SERVEUR", Toast.LENGTH_SHORT);
@@ -51,10 +51,11 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void OnSuccess(List<Question> object) throws IOException {
                 for (Question q : object) {
-                    QuestionDataBaseHelper.getInstance(MainActivity.this).addQuestion(q);
+                    //QuestionDataBaseHelper.getInstance(MainActivity.this).addQuestion(q);
+                    QuestionDataBaseHelper.getInstance(MainActivity.this).addOrUpdateQuestion(q);
                 }
             }
-        });
+        });*/
 
         if(currentFragment == null) {
             displayHomeFragment();
@@ -183,5 +184,10 @@ public class MainActivity extends AppCompatActivity
         }
 
         displayQuestionListFragment();
+    }
+
+    @Override
+    public void saveUserAnswer(boolean answer) {
+
     }
 }

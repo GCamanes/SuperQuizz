@@ -64,36 +64,6 @@ public class QuestionDataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void addQuestion(Question q) {
-        // Create and/or open the database for writing
-        SQLiteDatabase db = getWritableDatabase();
-
-        db.beginTransaction();
-        try {
-
-            //int id = getAllQuestions().size()+1;
-
-            ContentValues values = new ContentValues();
-            //values.put(KEY_QCM_ID, id);
-            values.put(KEY_QCM_LABEL, q.getIntitule());
-            values.put(KEY_QCM_ANSWER1, q.getPropositions().get(0));
-            values.put(KEY_QCM_ANSWER2, q.getPropositions().get(1));
-            values.put(KEY_QCM_ANSWER3, q.getPropositions().get(2));
-            values.put(KEY_QCM_ANSWER4, q.getPropositions().get(3));
-            values.put( KEY_QCM_GOOD_ANSWER, q.getBonneReponse());
-
-            // Notice how we haven't specified the primary key. SQLite auto increments the primary key column.
-            db.insertOrThrow(TABLE_QCM, null, values);
-            db.setTransactionSuccessful();
-        } catch (Exception e) {
-            Log.e("ERROR SQL CREATION "+TABLE_QCM, "Error while trying to add question to database");
-        } finally {
-            db.endTransaction();
-        }
-
-
-    }
-
     public List<Question> getAllQuestions() {
         List<Question> listQuestions = new ArrayList<Question>();
 
@@ -145,6 +115,62 @@ public class QuestionDataBaseHelper extends SQLiteOpenHelper {
         // Updating profile picture url for user with that userName
         return db.update(TABLE_QCM, values, KEY_QCM_ID + " = ?",
                 new String[] { String.valueOf(q.getId()) });
+    }
+
+    public void addQuestion(Question q) {
+        // Create and/or open the database for writing
+        SQLiteDatabase db = getWritableDatabase();
+
+        db.beginTransaction();
+        try {
+
+            ContentValues values = new ContentValues();
+            values.put(KEY_QCM_LABEL, q.getIntitule());
+            values.put(KEY_QCM_ANSWER1, q.getPropositions().get(0));
+            values.put(KEY_QCM_ANSWER2, q.getPropositions().get(1));
+            values.put(KEY_QCM_ANSWER3, q.getPropositions().get(2));
+            values.put(KEY_QCM_ANSWER4, q.getPropositions().get(3));
+            values.put( KEY_QCM_GOOD_ANSWER, q.getBonneReponse());
+
+            if (q.getId() != -1) {
+                values.put(KEY_QCM_ID, q.getId());
+            }
+
+            db.insertOrThrow(TABLE_QCM, null, values);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.e("ERROR SQL CREATION "+TABLE_QCM, "Error while trying to add question to database");
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    public void addOrUpdateQuestion(Question q) {
+        // Create and/or open the database for writing
+        SQLiteDatabase db = getWritableDatabase();
+
+        db.beginTransaction();
+
+        try {
+            ContentValues values = new ContentValues();
+            values.put(KEY_QCM_ID, q.getId());
+
+            String QUESTIONS_SELECT_QUERY =
+                    String.format("SELECT * FROM %s WHERE %s = ?", TABLE_QCM, KEY_QCM_ID);
+
+            Cursor cursor = db.rawQuery(QUESTIONS_SELECT_QUERY, new String[] { String.valueOf(q.getId()) });
+
+            if (cursor.moveToFirst()) {
+                updateQuestion(q);
+            } else {
+                addQuestion(q);
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.e("ERROR SQL CREATION "+TABLE_QCM, "Error while trying to add question to database");
+        } finally {
+            db.endTransaction();
+        }
     }
 
     public static synchronized QuestionDataBaseHelper getInstance(Context context) {
