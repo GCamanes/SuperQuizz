@@ -9,12 +9,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.List;
 
 import fr.difinamic.formation.superquizz.R;
+import fr.difinamic.formation.superquizz.api.APIClient;
 import fr.difinamic.formation.superquizz.database.QuestionDataBaseHelper;
 import fr.difinamic.formation.superquizz.model.Question;
+import fr.difinamic.formation.superquizz.ui.activities.MainActivity;
 
 /**
  * A fragment representing a list of Items.
@@ -59,6 +63,33 @@ public class QuestionListFragment extends Fragment {
         }
     }
 
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        APIClient.getInstance().getQuestions(new APIClient.APIResult<List<Question>>() {
+            @Override
+            public void onFailure(IOException e) {
+                Toast.makeText(QuestionListFragment.this.getContext(), "ERROR WITH HTTP SERVEUR", Toast.LENGTH_SHORT);
+            }
+
+            @Override
+            public void OnSuccess(final List<Question> object) throws IOException {
+
+                QuestionDataBaseHelper.getInstance(QuestionListFragment.this.getContext()).synchroniseDatabaseQuestions(object);
+
+                QuestionListFragment.this.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (adapter != null) {
+                            adapter.setListQuestions(object);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -97,8 +128,8 @@ public class QuestionListFragment extends Fragment {
     }
 
     public interface OnQuestionListListener {
-        // TODO: Update argument type and name
         void showQuestion(Question q);
         void updateQuestion(Question q);
+        String getUserAnswer(Question q);
     }
 }

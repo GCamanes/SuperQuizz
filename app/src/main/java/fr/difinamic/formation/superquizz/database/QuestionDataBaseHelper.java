@@ -101,6 +101,47 @@ public class QuestionDataBaseHelper extends SQLiteOpenHelper {
         return listQuestions;
     }
 
+    //TODO : Add this method to your database
+    public void synchroniseDatabaseQuestions(List<Question> serverQuestions) {
+
+        //TODO: Change getDatabase Question to have the real questions
+        List<Question> databaseQuestions = getAllQuestions();
+
+
+        // Here we will choose if we need to add or to update the question return by the server
+        for (Question serverQuestion : serverQuestions) {
+            boolean found = false;
+            for (Question dataBaseQuestion : databaseQuestions) {
+                if (serverQuestion.getId() == dataBaseQuestion.getId()) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found) {
+                updateQuestion(serverQuestion);
+               // updateUserAnswer(serverQuestion, null);
+            } else {
+                addQuestion(serverQuestion);
+            }
+        }
+
+        // Now we want to delete the question if thy are not on the server anymore
+        for (Question dataBaseQuestion : databaseQuestions) {
+            boolean found = false;
+            for (Question serverQuestion : serverQuestions) {
+                if (serverQuestion.getId() == dataBaseQuestion.getId()) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                deleteQuestion(dataBaseQuestion);
+            }
+        }
+    }
+
     public int updateQuestion(Question q) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -167,10 +208,83 @@ public class QuestionDataBaseHelper extends SQLiteOpenHelper {
             }
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            Log.e("ERROR SQL CREATION "+TABLE_QCM, "Error while trying to add question to database");
+            Log.e("ERROR SQL CREATION "+TABLE_QCM, "Error while trying to add or update question to database");
         } finally {
             db.endTransaction();
         }
+    }
+
+    public void deleteQuestion(Question q) {
+        // Create and/or open the database for writing
+        SQLiteDatabase db = getWritableDatabase();
+
+        db.beginTransaction();
+        try {
+            db.delete(TABLE_QCM, KEY_QCM_ID + " = ?", new String[] { String.valueOf(q.getId()) });
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.e("ERROR SQL CREATION "+TABLE_QCM, "Error while trying to delete question from database");
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    public void updateUserAnswer(Question q, String userAnswer) {
+        // Create and/or open the database for writing
+        SQLiteDatabase db = getWritableDatabase();
+
+        db.beginTransaction();
+
+        try {
+            ContentValues values = new ContentValues();
+            values.put(KEY_QCM_ID, q.getId());
+
+            String QUESTIONS_SELECT_QUERY =
+                    String.format("SELECT * FROM %s WHERE %s = ?", TABLE_QCM, KEY_QCM_ID);
+
+            Cursor cursor = db.rawQuery(QUESTIONS_SELECT_QUERY, new String[] { String.valueOf(q.getId()) });
+
+            if (cursor.moveToFirst()) {
+                values.put( KEY_QCM_USER_ANSWER, userAnswer);
+
+                db.update(TABLE_QCM, values, KEY_QCM_ID + " = ?",
+                        new String[] { String.valueOf(q.getId()) });
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.e("ERROR SQL CREATION "+TABLE_QCM, "Error while trying to save user answer to database");
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    public String getUserAnswer(Question q) {
+        boolean result = false;
+        String userAnswer = "...........";
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        db.beginTransaction();
+
+        try {
+            ContentValues values = new ContentValues();
+            values.put(KEY_QCM_ID, q.getId());
+
+            String QUESTIONS_SELECT_QUERY =
+                    String.format("SELECT * FROM %s WHERE %s = ?", TABLE_QCM, KEY_QCM_ID);
+
+            Cursor cursor = db.rawQuery(QUESTIONS_SELECT_QUERY, new String[] { String.valueOf(q.getId()) });
+
+            if (cursor.moveToFirst()) {
+                userAnswer = cursor.getString(cursor.getColumnIndex(KEY_QCM_USER_ANSWER));
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.e("ERROR SQL CREATION "+TABLE_QCM, "Error while trying to save user answer to database");
+        } finally {
+            db.endTransaction();
+        }
+        return userAnswer;
     }
 
     public static synchronized QuestionDataBaseHelper getInstance(Context context) {
