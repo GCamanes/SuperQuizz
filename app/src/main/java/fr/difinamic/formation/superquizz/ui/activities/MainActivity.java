@@ -28,7 +28,7 @@ import fr.difinamic.formation.superquizz.ui.fragments.ScoreFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, QuestionListFragment.OnQuestionListListener,
-        QuestionCreationFragment.OnCreatedQuestion, QuestionActivity.OnAnswerSelectedListener {
+        QuestionCreationFragment.OnCreatedQuestion {
 
     private static final String ARG_QUESTION = "question";
 
@@ -41,21 +41,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        /*APIClient.getInstance().getQuestions(new APIClient.APIResult<List<Question>>() {
-            @Override
-            public void onFailure(IOException e) {
-                Toast.makeText(MainActivity.this, "ERROR WITH HTTP SERVEUR", Toast.LENGTH_SHORT);
-            }
-
-            @Override
-            public void OnSuccess(List<Question> object) throws IOException {
-                for (Question q : object) {
-                    //QuestionDataBaseHelper.getInstance(MainActivity.this).addQuestion(q);
-                    QuestionDataBaseHelper.getInstance(MainActivity.this).addOrUpdateQuestion(q);
-                }
-            }
-        });*/
 
         if(currentFragment == null) {
             displayHomeFragment();
@@ -72,6 +57,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
+
+
 
     @Override
     public void onBackPressed() {
@@ -136,7 +123,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void displayScoreFragment() {
-        ScoreFragment fragment = ScoreFragment.newInstance(3, 4);
+
+        int score = 0;
+        List<Question> questions = QuestionDataBaseHelper.getInstance(this).getAllQuestions();
+        for (Question q: questions) {
+            if (q.verifierReponse(QuestionDataBaseHelper.getInstance(this).getUserAnswer(q))) {
+                score +=1;
+            }
+        }
+
+        ScoreFragment fragment = ScoreFragment.newInstance(score, questions.size());
         currentFragment = fragment;
         getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
     }
@@ -176,6 +172,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public String getUserAnswer(Question q) {
+        return QuestionDataBaseHelper.getInstance(this).getUserAnswer(q);
+    }
+
+    @Override
     public void saveQuestion(Question q) {
         if (q.getId() == -1) {
             QuestionDataBaseHelper.getInstance(this).addQuestion(q);
@@ -184,10 +185,5 @@ public class MainActivity extends AppCompatActivity
         }
 
         displayQuestionListFragment();
-    }
-
-    @Override
-    public void saveUserAnswer(boolean answer) {
-
     }
 }

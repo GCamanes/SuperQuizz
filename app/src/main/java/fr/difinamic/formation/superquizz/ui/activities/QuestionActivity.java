@@ -20,6 +20,8 @@ public class QuestionActivity extends AppCompatActivity implements AnswerQuestio
 
     private AnswerQuestionTask answerQuestionTask;
 
+    private Question mQuestion;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,30 +29,34 @@ public class QuestionActivity extends AppCompatActivity implements AnswerQuestio
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final Question question = getIntent().getParcelableExtra("question");
+        this.mQuestion = getIntent().getParcelableExtra("question");
 
         TextView textIntitule = (TextView)findViewById(R.id.text_intitule);
-        textIntitule.setText(question.getIntitule());
+        textIntitule.setText(this.mQuestion.getIntitule());
 
         Button button1 = (Button) findViewById(R.id.button_rep1);
-        button1.setText(question.getPropositions().get(0));
+        button1.setText(this.mQuestion.getPropositions().get(0));
         Button button2 = (Button) findViewById(R.id.button_rep2);
-        button2.setText(question.getPropositions().get(1));
+        button2.setText(this.mQuestion.getPropositions().get(1));
         Button button3 = (Button) findViewById(R.id.button_rep3);
-        button3.setText(question.getPropositions().get(2));
+        button3.setText(this.mQuestion.getPropositions().get(2));
         Button button4 = (Button) findViewById(R.id.button_rep4);
-        button4.setText(question.getPropositions().get(3));
+        button4.setText(this.mQuestion.getPropositions().get(3));
 
         this.answerQuestionTask = new AnswerQuestionTask(this);
 
         View.OnClickListener checkListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean check = question.verifierReponse(((Button )v).getText().toString());
-                Intent intentAnswer = new Intent(QuestionActivity.this, AnswerActivity.class );
-                intentAnswer.putExtra("answer", check);
-                startActivity(intentAnswer);
+                //boolean check = question.verifierReponse(((Button )v).getText().toString());
+                //Intent intentAnswer = new Intent(QuestionActivity.this, AnswerActivity.class );
+                //intentAnswer.putExtra("answer", check);
+                //startActivity(intentAnswer);
+
                 answerQuestionTask.cancel(true);
+                QuestionDataBaseHelper.getInstance(getApplicationContext()).updateUserAnswer(QuestionActivity.this.mQuestion, ((Button )v).getText().toString());
+                QuestionActivity.this.finish();
+
             }
         };
 
@@ -73,13 +79,15 @@ public class QuestionActivity extends AppCompatActivity implements AnswerQuestio
         ((ProgressBar) findViewById(R.id.progress_question)).setProgress(progress);
     }
     public void onCompletedTaskAnswerQuestion() {
-        Intent intentAnswer = new Intent(QuestionActivity.this, AnswerActivity.class);
-        intentAnswer.putExtra("answer", false);
-        startActivity(intentAnswer);
+        //Intent intentAnswer = new Intent(QuestionActivity.this, AnswerActivity.class);
+        //intentAnswer.putExtra("answer", false);
+        //startActivity(intentAnswer);
+        QuestionDataBaseHelper.getInstance(getApplicationContext()).updateUserAnswer(QuestionActivity.this.mQuestion, "........");
+        QuestionActivity.this.finish();
     }
 
     public interface OnAnswerSelectedListener {
-        void saveUserAnswer(boolean answer);
+        void saveUserAnswer(Question q, String userAnswer);
     }
 }
 
