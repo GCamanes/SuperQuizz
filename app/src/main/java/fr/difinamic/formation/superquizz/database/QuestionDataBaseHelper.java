@@ -27,7 +27,7 @@ public class QuestionDataBaseHelper extends SQLiteOpenHelper {
     // Table Names
     private static final String TABLE_QCM = "qcm";
 
-    // Post Table Columns
+    // QCM Table Columns
     private static final String KEY_QCM_ID = "question_id";
     private static final String KEY_QCM_LABEL = "label";
     private static final String KEY_QCM_ANSWER1 = "answer1";
@@ -285,6 +285,14 @@ public class QuestionDataBaseHelper extends SQLiteOpenHelper {
             db.endTransaction();
         }
         return userAnswer;
+    }
+
+    public void resetUserAnwsers() {
+        List<Question> questions = getAllQuestions();
+
+        for (Question q: questions) {
+            updateUserAnswer(q, null);
+        }
     }
 
     public static synchronized QuestionDataBaseHelper getInstance(Context context) {

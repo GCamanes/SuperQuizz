@@ -48,15 +48,9 @@ public class QuestionActivity extends AppCompatActivity implements AnswerQuestio
         View.OnClickListener checkListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //boolean check = question.verifierReponse(((Button )v).getText().toString());
-                //Intent intentAnswer = new Intent(QuestionActivity.this, AnswerActivity.class );
-                //intentAnswer.putExtra("answer", check);
-                //startActivity(intentAnswer);
-
                 answerQuestionTask.cancel(true);
                 QuestionDataBaseHelper.getInstance(getApplicationContext()).updateUserAnswer(QuestionActivity.this.mQuestion, ((Button )v).getText().toString());
                 QuestionActivity.this.finish();
-
             }
         };
 
@@ -79,9 +73,6 @@ public class QuestionActivity extends AppCompatActivity implements AnswerQuestio
         ((ProgressBar) findViewById(R.id.progress_question)).setProgress(progress);
     }
     public void onCompletedTaskAnswerQuestion() {
-        //Intent intentAnswer = new Intent(QuestionActivity.this, AnswerActivity.class);
-        //intentAnswer.putExtra("answer", false);
-        //startActivity(intentAnswer);
         QuestionDataBaseHelper.getInstance(getApplicationContext()).updateUserAnswer(QuestionActivity.this.mQuestion, "........");
         QuestionActivity.this.finish();
     }

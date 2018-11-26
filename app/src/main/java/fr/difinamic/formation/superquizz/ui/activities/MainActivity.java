@@ -1,6 +1,12 @@
 package fr.difinamic.formation.superquizz.ui.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
@@ -12,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -19,6 +26,7 @@ import java.util.List;
 
 import fr.difinamic.formation.superquizz.R;
 import fr.difinamic.formation.superquizz.api.APIClient;
+import fr.difinamic.formation.superquizz.broadcast.NetworkChangeReceiver;
 import fr.difinamic.formation.superquizz.database.QuestionDataBaseHelper;
 import fr.difinamic.formation.superquizz.model.*;
 import fr.difinamic.formation.superquizz.ui.fragments.HomeFragment;
@@ -35,12 +43,16 @@ public class MainActivity extends AppCompatActivity
     private static Fragment currentFragment;
     private static final String ARG_CURRENTFRAGMENT = "current_fragment";
 
+    public boolean status_connection;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        QuestionDataBaseHelper.getInstance(this).resetUserAnwsers();
 
         if(currentFragment == null) {
             displayHomeFragment();
@@ -56,8 +68,45 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        //should check null because in airplane mode it will be null
+        status_connection = (netInfo != null && netInfo.isConnected());
+
+        registerReceiver();
+      }
+
+    private void registerReceiver()
+    {
+        try
+        {
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(NetworkChangeReceiver.NETWORK_CHANGE_ACTION);
+            registerReceiver(internalNetworkChangeReceiver, intentFilter);
+
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
+    @Override
+    protected void onDestroy()
+    {
+        try
+        {
+            // Make sure to unregister internal receiver in onDestroy().
+            unregisterReceiver(internalNetworkChangeReceiver);
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        super.onDestroy();
+    }
 
 
     @Override
@@ -84,6 +133,12 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        if (id == R.id.button_refresh_answers) {
+            QuestionDataBaseHelper.getInstance(this).resetUserAnwsers();
+            if (currentFragment instanceof QuestionListFragment) {
+                displayQuestionListFragment();
+            }
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -138,10 +193,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void displayQuestionCreationFragment(Question q) {
-        QuestionCreationFragment fragment = QuestionCreationFragment.newInstance(q);
-        currentFragment = fragment;
-        fragment.setListener(this);
-        getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
+        if (status_connection) {
+            QuestionCreationFragment fragment = QuestionCreationFragment.newInstance(q);
+            currentFragment = fragment;
+            fragment.setListener(this);
+            getSupportFragmentManager().beginTransaction().replace(R.id.frament_container, fragment).commit();
+        } else {
+            Toast.makeText(this, "Pas de connection internet", Toast.LENGTH_SHORT);
+        }
     }
 
     public void displayInfosActivity() {
@@ -179,11 +238,43 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void saveQuestion(Question q) {
         if (q.getId() == -1) {
-            QuestionDataBaseHelper.getInstance(this).addQuestion(q);
+            //QuestionDataBaseHelper.getInstance(this).addQuestion(q);
+            APIClient.getInstance().createQuestion(new APIClient.APIResult<Question>() {
+                @Override
+                public void onFailure(IOException e) {
+                    //Toast.makeText(MainActivity.this, "ERROR WITH HTTP SERVEUR", Toast.LENGTH_SHORT);
+                }
+
+                @Override
+                public void OnSuccess(Question object) throws IOException {
+                    //Toast.makeText(MainActivity.this, "Question ajoutée au serveur !", Toast.LENGTH_SHORT);
+                }
+            }, q);
         } else {
-            QuestionDataBaseHelper.getInstance(this).updateQuestion(q);
+            //QuestionDataBaseHelper.getInstance(this).updateQuestion(q);
+            APIClient.getInstance().updateQuestion(new APIClient.APIResult<Question>() {
+                @Override
+                public void onFailure(IOException e) {
+
+                }
+
+                @Override
+                public void OnSuccess(Question object) throws IOException {
+
+                }
+            }, q);
         }
 
         displayQuestionListFragment();
+    }
+
+    InternalNetworkChangeReceiver internalNetworkChangeReceiver = new InternalNetworkChangeReceiver();
+    class InternalNetworkChangeReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            status_connection = intent.getBooleanExtra("status", false);
+
+        }
     }
 }

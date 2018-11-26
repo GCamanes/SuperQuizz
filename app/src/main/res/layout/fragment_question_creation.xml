@@ -6,7 +6,6 @@
     android:orientation="vertical"
     tools:context=".ui.fragments.QuestionCreationFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,7 +19,6 @@
         android:hint="Votre intitulé"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:layout_marginLeft="16dp"
         android:singleLine="true"
         android:maxLength="60"
@@ -31,8 +29,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_weight="1">
+        android:orientation="horizontal">
 
         <RadioButton
             android:id="@+id/radio_answer1"
@@ -54,8 +51,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_weight="1">
+        android:orientation="horizontal">
 
         <RadioButton
             android:id="@+id/radio_answer2"
@@ -77,8 +73,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_weight="1">
+        android:orientation="horizontal">
 
         <RadioButton
             android:id="@+id/radio_answer3"
@@ -100,8 +95,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_weight="1">
+        android:orientation="horizontal">
 
         <RadioButton
             android:id="@+id/radio_answer4"
