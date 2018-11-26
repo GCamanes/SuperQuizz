@@ -2,4 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item
+        android:title="button_refresh_answers"
+        android:id="@+id/button_refresh_answers"
+        android:icon="@drawable/ic_sync_white_24dp"
+        app:showAsAction="always"
+        />
 </menu>

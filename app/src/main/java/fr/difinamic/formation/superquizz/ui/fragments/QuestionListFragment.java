@@ -70,7 +70,14 @@ public class QuestionListFragment extends Fragment {
         APIClient.getInstance().getQuestions(new APIClient.APIResult<List<Question>>() {
             @Override
             public void onFailure(IOException e) {
-                Toast.makeText(QuestionListFragment.this.getContext(), "ERROR WITH HTTP SERVEUR", Toast.LENGTH_SHORT);
+                QuestionListFragment.this.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (adapter != null) {
+                            adapter.setListQuestions(QuestionDataBaseHelper.getInstance(QuestionListFragment.this.getContext()).getAllQuestions());
+                        }
+                    }
+                });
             }
 
             @Override
