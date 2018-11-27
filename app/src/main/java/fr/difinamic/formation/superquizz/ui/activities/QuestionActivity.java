@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -20,6 +21,8 @@ public class QuestionActivity extends AppCompatActivity implements AnswerQuestio
 
     private AnswerQuestionTask answerQuestionTask;
 
+    private final String KEY_QUESTION = "question";
+
     private Question mQuestion;
 
     @Override
@@ -29,7 +32,7 @@ public class QuestionActivity extends AppCompatActivity implements AnswerQuestio
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        this.mQuestion = getIntent().getParcelableExtra("question");
+        this.mQuestion = getIntent().getParcelableExtra(KEY_QUESTION);
 
         TextView textIntitule = (TextView)findViewById(R.id.text_intitule);
         textIntitule.setText(this.mQuestion.getIntitule());
@@ -49,7 +52,11 @@ public class QuestionActivity extends AppCompatActivity implements AnswerQuestio
             @Override
             public void onClick(View v) {
                 answerQuestionTask.cancel(true);
-                QuestionDataBaseHelper.getInstance(getApplicationContext()).updateUserAnswer(QuestionActivity.this.mQuestion, ((Button )v).getText().toString());
+                double elapsedTime = answerQuestionTask.getElapsedTime();
+
+                QuestionDataBaseHelper.getInstance(getApplicationContext()).
+                        updateUserAnswer(QuestionActivity.this.mQuestion, ((Button )v).getText().toString(), answerQuestionTask.getElapsedTime());
+
                 QuestionActivity.this.finish();
             }
         };
@@ -58,7 +65,6 @@ public class QuestionActivity extends AppCompatActivity implements AnswerQuestio
         button2.setOnClickListener(checkListener);
         button3.setOnClickListener(checkListener);
         button4.setOnClickListener(checkListener);
-
 
         answerQuestionTask.execute();
     }
@@ -73,7 +79,9 @@ public class QuestionActivity extends AppCompatActivity implements AnswerQuestio
         ((ProgressBar) findViewById(R.id.progress_question)).setProgress(progress);
     }
     public void onCompletedTaskAnswerQuestion() {
-        QuestionDataBaseHelper.getInstance(getApplicationContext()).updateUserAnswer(QuestionActivity.this.mQuestion, "........");
+        QuestionDataBaseHelper.getInstance(getApplicationContext()).
+                updateUserAnswer(QuestionActivity.this.mQuestion, "........", answerQuestionTask.getElapsedTime());
+
         QuestionActivity.this.finish();
     }
 

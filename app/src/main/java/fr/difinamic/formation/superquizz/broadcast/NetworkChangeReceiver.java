@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 /**
  * Created by vishalchhodwani on 25/12/17.
@@ -15,7 +16,7 @@ public class NetworkChangeReceiver  extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
-
+        Log.e("BROADCAST_RECEIVED", isOnline(context)+ "");
         if (isOnline(context))
         {
             sendInternalBroadcast(context, true);

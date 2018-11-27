@@ -2,10 +2,6 @@ package fr.difinamic.formation.superquizz.ui.threads;
 
 import android.os.AsyncTask;
 import android.os.SystemClock;
-import android.widget.PopupMenu;
-import android.widget.ProgressBar;
-
-import fr.difinamic.formation.superquizz.R;
 
 public class AnswerQuestionTask extends AsyncTask<Void, Integer, String> {
     int count = 0;
@@ -17,9 +13,13 @@ public class AnswerQuestionTask extends AsyncTask<Void, Integer, String> {
         this.mListener = listener;
     }
 
+    public int getElapsedTime() {
+        return count*10;
+    }
+
     @Override
     protected void onPreExecute() {
-        //progressBar.setVisibility(ProgressBar.VISIBLE);
+
     }
 
     @Override

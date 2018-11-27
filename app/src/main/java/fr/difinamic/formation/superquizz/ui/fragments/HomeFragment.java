@@ -10,20 +10,15 @@ import android.widget.TextView;
 import fr.difinamic.formation.superquizz.R;
 
 public class HomeFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_APPNAME = "appName";
 
-    // TODO: Rename and change types of parameters
     private String mAppName;
 
-
     public HomeFragment() {
-        // Required empty public constructor
+
     }
 
-
-    // TODO: Rename and change types and number of parameters
     public static HomeFragment newInstance(String appName) {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();

@@ -36,6 +36,7 @@ public class QuestionDataBaseHelper extends SQLiteOpenHelper {
     private static final String KEY_QCM_ANSWER4 = "answer4";
     private static final String KEY_QCM_GOOD_ANSWER = "good_answer";
     private static final String KEY_QCM_USER_ANSWER = "user_answer";
+    private static final String KEY_QCM_USER_ANSWER_TIME = "user_answer_time";
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -49,7 +50,8 @@ public class QuestionDataBaseHelper extends SQLiteOpenHelper {
                     KEY_QCM_ANSWER3 +" VARCHAR(50) NOT NULL,"+
                     KEY_QCM_ANSWER4 +" VARCHAR(50) NOT NULL,"+
                     KEY_QCM_GOOD_ANSWER +" VARCHAR(50) NOT NULL,"+
-                    KEY_QCM_USER_ANSWER +" VARCHAR(50)"+
+                    KEY_QCM_USER_ANSWER +" VARCHAR(50),"+
+                    KEY_QCM_USER_ANSWER_TIME + " INTEGER"+
                 ")";
         // Execute the query of table creation
         db.execSQL(CREATE_QCM_TABLE);
@@ -101,12 +103,9 @@ public class QuestionDataBaseHelper extends SQLiteOpenHelper {
         return listQuestions;
     }
 
-    //TODO : Add this method to your database
     public void synchroniseDatabaseQuestions(List<Question> serverQuestions) {
 
-        //TODO: Change getDatabase Question to have the real questions
         List<Question> databaseQuestions = getAllQuestions();
-
 
         // Here we will choose if we need to add or to update the question return by the server
         for (Question serverQuestion : serverQuestions) {
@@ -229,7 +228,7 @@ public class QuestionDataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void updateUserAnswer(Question q, String userAnswer) {
+    public void updateUserAnswer(Question q, String userAnswer, int elapsedTime) {
         // Create and/or open the database for writing
         SQLiteDatabase db = getWritableDatabase();
 
@@ -246,6 +245,7 @@ public class QuestionDataBaseHelper extends SQLiteOpenHelper {
 
             if (cursor.moveToFirst()) {
                 values.put( KEY_QCM_USER_ANSWER, userAnswer);
+                values.put( KEY_QCM_USER_ANSWER_TIME, elapsedTime);
 
                 db.update(TABLE_QCM, values, KEY_QCM_ID + " = ?",
                         new String[] { String.valueOf(q.getId()) });
@@ -287,11 +287,40 @@ public class QuestionDataBaseHelper extends SQLiteOpenHelper {
         return userAnswer;
     }
 
-    public void resetUserAnwsers() {
+    public int getUserAnswerTime(Question q) {
+        boolean result = false;
+        int userAnswerTime = 0;
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        db.beginTransaction();
+
+        try {
+            ContentValues values = new ContentValues();
+            values.put(KEY_QCM_ID, q.getId());
+
+            String QUESTIONS_SELECT_QUERY =
+                    String.format("SELECT * FROM %s WHERE %s = ?", TABLE_QCM, KEY_QCM_ID);
+
+            Cursor cursor = db.rawQuery(QUESTIONS_SELECT_QUERY, new String[] { String.valueOf(q.getId()) });
+
+            if (cursor.moveToFirst()) {
+                userAnswerTime = cursor.getInt(cursor.getColumnIndex(KEY_QCM_USER_ANSWER_TIME));
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.e("ERROR SQL CREATION "+TABLE_QCM, "Error while trying to save user answer to database");
+        } finally {
+            db.endTransaction();
+        }
+        return userAnswerTime;
+    }
+
+    public void resetUserAnswers() {
         List<Question> questions = getAllQuestions();
 
         for (Question q: questions) {
-            updateUserAnswer(q, null);
+            updateUserAnswer(q, null, 0);
         }
     }
 
