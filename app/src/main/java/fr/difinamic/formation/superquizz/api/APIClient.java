@@ -69,16 +69,16 @@ public class APIClient {
                     for (int i = 0; i < json.length(); i++) {
                         JSONObject j = json.getJSONObject(i);
                         Question q = new Question(
-                                j.getInt("id"),
-                                j.getString("title"),
+                                j.getInt(KEY_SERVER_ID),
+                                j.getString(KEY_SERVER_LABEL),
                                 4, TypeQuestion.SIMPLE);
 
-                        q.addProposition(j.getString("answer_1"));
-                        q.addProposition(j.getString("answer_2"));
-                        q.addProposition(j.getString("answer_3"));
-                        q.addProposition(j.getString("answer_4"));
+                        q.addProposition(j.getString(KEY_SERVER_ANSWER1));
+                        q.addProposition(j.getString(KEY_SERVER_ANSWER2));
+                        q.addProposition(j.getString(KEY_SERVER_ANSWER3));
+                        q.addProposition(j.getString(KEY_SERVER_ANSWER4));
 
-                        q.setBonneReponse(q.getPropositions().get(Integer.parseInt(j.getString("correct_answer"))-1));
+                        q.setBonneReponse(q.getPropositions().get(Integer.parseInt(j.getString(KEY_SERVER_GOOD_ANSWER))-1));
 
                         questions.add(q);
                     }
@@ -97,9 +97,7 @@ public class APIClient {
         JSONObject json = new JSONObject();
         try {
             json = parseQuestionToJSON(q);
-        } catch (JSONException e) {
-            //TODO LOG
-        }
+        } catch (JSONException e) { }
 
         Request request = new Request.Builder()
                 .url(serverUrl+"questions").method("POST", RequestBody.create(JSON_TYPE,json.toString()))

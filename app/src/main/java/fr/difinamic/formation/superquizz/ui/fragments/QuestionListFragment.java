@@ -28,23 +28,16 @@ import fr.difinamic.formation.superquizz.ui.activities.MainActivity;
  */
 public class QuestionListFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
+
     private int mColumnCount = 1;
     private OnQuestionListListener mListener;
 
     private QuestionRecyclerMemViewAdapter adapter;
 
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public QuestionListFragment() {
-    }
+    public QuestionListFragment() {}
 
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static QuestionListFragment newInstance(int columnCount) {
         QuestionListFragment fragment = new QuestionListFragment();
@@ -74,7 +67,8 @@ public class QuestionListFragment extends Fragment {
                     @Override
                     public void run() {
                         if (adapter != null) {
-                            adapter.setListQuestions(QuestionDataBaseHelper.getInstance(QuestionListFragment.this.getContext()).getAllQuestions());
+                            adapter.setListQuestions(QuestionDataBaseHelper.getInstance(QuestionListFragment.this.getContext()).
+                                    getAllQuestions());
                         }
                     }
                 });

@@ -1,13 +1,13 @@
 package fr.difinamic.formation.superquizz.ui.activities;
 
 import android.content.BroadcastReceiver;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 
 import android.support.design.widget.NavigationView;
@@ -18,7 +18,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -40,8 +39,9 @@ public class MainActivity extends AppCompatActivity
 
     private static final String ARG_QUESTION = "question";
 
+    private static final String SHARED_PREF_KEEP_ANSWERS = "settings_keepUserAnswersOnRefresh";
+
     private static Fragment currentFragment;
-    private static final String ARG_CURRENTFRAGMENT = "current_fragment";
 
     public boolean status_connection;
 
@@ -51,8 +51,10 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        QuestionDataBaseHelper.getInstance(this).resetUserAnwsers();
+        if (!PreferenceManager.getDefaultSharedPreferences(this).
+                getBoolean(SHARED_PREF_KEEP_ANSWERS, false)) {
+            QuestionDataBaseHelper.getInstance(this).resetUserAnswers();
+        }
 
         if(currentFragment == null) {
             displayHomeFragment();
@@ -78,8 +80,7 @@ public class MainActivity extends AppCompatActivity
         registerReceiver();
       }
 
-    private void registerReceiver()
-    {
+    private void registerReceiver() {
         try
         {
             IntentFilter intentFilter = new IntentFilter();
@@ -134,9 +135,13 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.button_refresh_answers) {
-            QuestionDataBaseHelper.getInstance(this).resetUserAnwsers();
+            if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean(SHARED_PREF_KEEP_ANSWERS, false)) {
+                QuestionDataBaseHelper.getInstance(this).resetUserAnswers();
+            }
             if (currentFragment instanceof QuestionListFragment) {
                 displayQuestionListFragment();
+            } else if (currentFragment instanceof ScoreFragment) {
+                displayScoreFragment();
             }
         }
         return super.onOptionsItemSelected(item);

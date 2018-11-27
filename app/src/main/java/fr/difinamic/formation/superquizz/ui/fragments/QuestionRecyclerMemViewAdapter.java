@@ -1,7 +1,6 @@
 package fr.difinamic.formation.superquizz.ui.fragments;
 
 import android.graphics.Color;
-import android.support.annotation.ColorInt;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,13 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import fr.difinamic.formation.superquizz.R;
-import fr.difinamic.formation.superquizz.database.QuestionDataBaseHelper;
 import fr.difinamic.formation.superquizz.model.Question;
 import fr.difinamic.formation.superquizz.ui.fragments.QuestionListFragment.OnQuestionListListener;
 
 import java.util.List;
-
-import static fr.difinamic.formation.superquizz.R.color.colorGreen;
 
 public class QuestionRecyclerMemViewAdapter extends RecyclerView.Adapter<QuestionRecyclerMemViewAdapter.ViewHolder> {
 
