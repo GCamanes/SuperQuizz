@@ -74,9 +74,7 @@ public class ScoreFragment extends Fragment {
 
         pieChart.setDragDecelerationFrictionCoef(0.95f);
 
-        pieChart.setDrawHoleEnabled(true);
-        pieChart.setHoleColor(Color.WHITE);
-
+        pieChart.setDrawHoleEnabled(false);
         pieChart.setTransparentCircleRadius(0f);
 
         pieChart.setRotationAngle(0);
