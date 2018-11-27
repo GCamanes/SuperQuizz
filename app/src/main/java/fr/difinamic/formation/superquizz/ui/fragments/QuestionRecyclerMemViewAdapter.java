@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import fr.difinamic.formation.superquizz.R;
 import fr.difinamic.formation.superquizz.model.Question;
 import fr.difinamic.formation.superquizz.ui.fragments.QuestionListFragment.OnQuestionListListener;
@@ -18,6 +20,7 @@ public class QuestionRecyclerMemViewAdapter extends RecyclerView.Adapter<Questio
 
     private List<Question> mListQuestions ;
     private final OnQuestionListListener mListener;
+    private ViewGroup parent;
 
     public QuestionRecyclerMemViewAdapter( OnQuestionListListener listener, List<Question> questions) {
         mListener = listener;
@@ -28,6 +31,7 @@ public class QuestionRecyclerMemViewAdapter extends RecyclerView.Adapter<Questio
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_question, parent, false);
+        this.parent = parent;
         return new ViewHolder(view);
     }
 
@@ -39,8 +43,9 @@ public class QuestionRecyclerMemViewAdapter extends RecyclerView.Adapter<Questio
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mQuestion = mListQuestions.get(position);
-        holder.mIdView.setText(String.valueOf(position+1));
-        holder.mContentView.setText(mListQuestions.get(position).getIntitule());
+        holder.mContentView.setText(String.valueOf(position+1)+ ". "+mListQuestions.get(position).getIntitule());
+
+        Picasso.with(parent.getContext()).load("https://i.pinimg.com/236x/3b/ee/9d/3bee9dc05a93109271b7f82f151e7d32.jpg").into(holder.mImageViewUser);
 
         String userAnswer = mListener.getUserAnswer(holder.mQuestion);
 
@@ -85,7 +90,7 @@ public class QuestionRecyclerMemViewAdapter extends RecyclerView.Adapter<Questio
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public ImageView mImageView;
-        public final TextView mIdView;
+        public ImageView mImageViewUser;
         public final TextView mContentView;
         public Question mQuestion;
 
@@ -93,8 +98,8 @@ public class QuestionRecyclerMemViewAdapter extends RecyclerView.Adapter<Questio
             super(view);
             mView = view;
             mImageView = (ImageView) view.findViewById(R.id.img_answer);
-            mIdView = (TextView) view.findViewById(R.id.item_number);
             mContentView = (TextView) view.findViewById(R.id.content);
+            mImageViewUser = (ImageView) view.findViewById(R.id.img_user);
         }
 
         @Override
